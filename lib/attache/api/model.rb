@@ -37,7 +37,6 @@ module Attache
         V1.attache_delete(*files.uniq) unless files.empty?
       rescue Exception
         raise if ENV['ATTACHE_DISCARD_FAILURE_RAISE_ERROR']
-        STDERR.puts [$!, $@]
       end
     end
   end

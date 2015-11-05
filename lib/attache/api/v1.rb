@@ -7,6 +7,8 @@ require 'cgi'
 module Attache
   module API
     module V1
+      class HTTPClient < ::HTTPClient; end # local reference
+
       ATTACHE_URL             = ENV.fetch('ATTACHE_URL')             { "http://localhost:9292" }
       ATTACHE_UPLOAD_URL      = ENV.fetch('ATTACHE_UPLOAD_URL')      { "#{ATTACHE_URL}/upload" }
       ATTACHE_DOWNLOAD_URL    = ENV.fetch('ATTACHE_DOWNLOAD_URL')    { "#{ATTACHE_URL}/view" }
