@@ -54,7 +54,7 @@ class Attache::API::TestV1 < Minitest::Test
       assert_equal 200, remote_response.code
 
       attache_delete(@uploaded['path'])
-      assert_equal 404, remote_response(wait: 10).code, "should be removed after :attache_delete"
+      assert_equal 404, remote_response(wait: ENV.fetch('REMOTE_RESPONSE_WAIT_DELETE') { 10 }.to_i).code, "#{@uploaded['path']} should be removed after :attache_delete"
     end
 
     def test_url_for
