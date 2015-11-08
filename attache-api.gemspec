@@ -5,11 +5,11 @@ require "attache/api/version"
 
 # Describe your gem and declare its dependencies:
 Gem::Specification.new do |s|
-  s.name        = "attache_api"
+  s.name        = "attache-api"
   s.version     = Attache::API::VERSION
   s.authors     = ["choonkeat"]
   s.email       = ["choonkeat@gmail.com"]
-  s.homepage    = "https://github.com/choonkeat/attache_api"
+  s.homepage    = "https://github.com/choonkeat/attache-api"
   s.summary     = "API for client lib to integrate with attache server"
   s.license     = "MIT"
 
