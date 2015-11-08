@@ -1,5 +1,6 @@
 # Attache/API
 
+[![Gem Version](https://badge.fury.io/rb/attache-api.svg)](https://badge.fury.io/rb/attache-api)
 [![Build Status](https://travis-ci.org/choonkeat/attache-api.svg?branch=master)](https://travis-ci.org/choonkeat/attache-api)
 
 Core library and tests to integrate with an [attache](https://github.com/choonkeat/attache) server; to be leveraged by client libraries e.g. [attache_rails](https://github.com/choonkeat/attache_rails) which integrates with ActiveRecord
