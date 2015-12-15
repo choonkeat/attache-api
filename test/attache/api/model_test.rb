@@ -26,7 +26,7 @@ class Attache::API::TestModel < Minitest::Test
   end
 
   def test_attache_field_attributes
-    assert_equal [{"path"=>"dirname456/value789", "url"=>"http://localhost:9292/view/dirname456/geometry123/value789"}],
+    assert_equal [{"path"=>"dirname456/value789", "url"=>"#{Attache::API::V1::ATTACHE_URL}/view/dirname456/geometry123/value789"}],
       attache_field_attributes( { "path" => "dirname456/value789" }, "geometry123")
   end
 
@@ -48,6 +48,16 @@ class Attache::API::TestModel < Minitest::Test
     }
     HTTPClient.stub(:post_content, assertion) do
       attaches_discard!(["one", nil, "two", "", "three"])
+    end
+  end
+
+  def test_attaches_backup
+    assertion = -> (uri, params) {
+      assert_equal URI.parse(Attache::API::V1::ATTACHE_BACKUP_URL), uri
+      assert_equal "one\ntwo\nthree", params[:paths]
+    }
+    HTTPClient.stub(:post_content, assertion) do
+      attaches_backup!(["one", nil, "two", "", "three"])
     end
   end
 end

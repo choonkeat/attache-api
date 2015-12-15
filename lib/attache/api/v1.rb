@@ -13,6 +13,7 @@ module Attache
       ATTACHE_UPLOAD_URL      = ENV.fetch('ATTACHE_UPLOAD_URL')      { "#{ATTACHE_URL}/upload" }
       ATTACHE_DOWNLOAD_URL    = ENV.fetch('ATTACHE_DOWNLOAD_URL')    { "#{ATTACHE_URL}/view" }
       ATTACHE_DELETE_URL      = ENV.fetch('ATTACHE_DELETE_URL')      { "#{ATTACHE_URL}/delete" }
+      ATTACHE_BACKUP_URL      = ENV.fetch('ATTACHE_BACKUP_URL')      { "#{ATTACHE_URL}/backup" }
       ATTACHE_UPLOAD_DURATION = ENV.fetch('ATTACHE_UPLOAD_DURATION') { 3*3600 }.to_i # expires signed upload form
       ATTACHE_SECRET_KEY      = ENV['ATTACHE_SECRET_KEY']            # unset to test password-less interaction
 
@@ -37,6 +38,13 @@ module Attache
       def attache_delete(*paths)
         HTTPClient.post_content(
           URI.parse(ATTACHE_DELETE_URL),
+          attache_auth_options.merge(paths: paths.join("\n"))
+        )
+      end
+
+      def attache_backup(*paths)
+        HTTPClient.post_content(
+          URI.parse(ATTACHE_BACKUP_URL),
           attache_auth_options.merge(paths: paths.join("\n"))
         )
       end

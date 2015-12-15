@@ -50,6 +50,11 @@ class Attache::API::TestV1 < Minitest::Test
       assert_equal "", response, "should respond with empty string when there are no errors"
     end
 
+    def test_backup
+      response = attache_backup(@uploaded['path'])
+      assert_equal "", response, "should respond with empty string when there are no errors"
+    end
+
     def test_download_remote
       assert_equal 200, remote_response.code
 
