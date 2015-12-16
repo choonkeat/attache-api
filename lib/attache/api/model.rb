@@ -38,6 +38,11 @@ module Attache
       rescue Exception
         raise if ENV['ATTACHE_DISCARD_FAILURE_RAISE_ERROR']
       end
+
+      def attaches_backup!(files)
+        files.reject! {|x| x.nil? || x == "" }
+        V1.attache_backup(*files.uniq) unless files.empty?
+      end
     end
   end
 end
