@@ -27,9 +27,11 @@ module Attache
         Utils.array(new_value)
       end
 
-      def attache_mark_for_discarding(old_value, new_value, attaches_discarded)
-        obsoleted = Utils.array(old_value).collect {|x| x['path'] } - Utils.array(new_value).collect {|x| x['path'] }
-        obsoleted.each {|path| attaches_discarded.push(path) unless path.nil? || path == "" }
+      def attache_update_pending_diffs(old_value, new_value, pending_backup, pending_discard)
+        old_paths = Utils.array(old_value).collect { |x| x['path'] }.reject { |path| path.nil? || path == "" }
+        new_paths = Utils.array(new_value).collect { |x| x['path'] }.reject { |path| path.nil? || path == "" }
+        pending_backup.push(*(new_paths - old_paths))
+        pending_discard.push(*(old_paths - new_paths))
       end
 
       def attaches_discard!(files)

@@ -35,10 +35,12 @@ class Attache::API::TestModel < Minitest::Test
       attache_field_set([{}, "", {"path" => "dirname456/value789"}, nil])
   end
 
-  def test_attache_mark_for_discarding
-    attaches_discarded = []
-    attache_mark_for_discarding([{}, "", {"path" => "dirname456/value789"}, nil, {"path" => "dirname456/value7892"}], [{"path" => "dirname456/value7892"}], attaches_discarded)
-    assert_equal ["dirname456/value789"], attaches_discarded
+  def test_attache_update_pending_diffs
+    pending_backup = []
+    pending_discard = []
+    attache_update_pending_diffs([{}, "", {"path" => "dirname456/value789"}, nil, {"path" => "dirname456/value7892"}], [{"path" => "dirname456/value7892"}, "", nil, {}, {"path" => "dirname789/value987"}], pending_backup, pending_discard)
+    assert_equal ["dirname789/value987"], pending_backup
+    assert_equal ["dirname456/value789"], pending_discard
   end
 
   def test_attaches_discard
