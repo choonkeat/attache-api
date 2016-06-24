@@ -17,11 +17,19 @@ module Attache
         end
       end
 
-      def attache_field_set(array)
+      def attache_field_set(array, secret_key: Attache::API::V1::ATTACHE_SECRET_KEY)
         new_value = Utils.array(array).inject([]) {|sum,value|
           hash = value.respond_to?(:read) && V1.attache_upload(value) || value
           hash = JSON.parse(hash.to_s) rescue Hash(error: $!) unless hash.kind_of?(Hash)
           okay = hash.respond_to?(:[]) && (hash['path'] || hash[:path])
+          if secret_key.to_s.strip != ""
+            hash_without_signature = hash.reject {|k,v| k == 'signature' }
+            content = hash_without_signature.sort.collect {|k,v| "#{k}=#{v}" }.join('&')
+            generated_signature = OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new('sha1'), secret_key, content)
+            if generated_signature != hash['signature']
+              okay = nil
+            end
+          end
           okay ? sum + [hash] : sum
         }
         Utils.array(new_value)

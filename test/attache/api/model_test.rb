@@ -30,9 +30,20 @@ class Attache::API::TestModel < Minitest::Test
       attache_field_attributes( { "path" => "dirname456/value789" }, "geometry123")
   end
 
-  def test_attache_field_set
+  def test_attache_field_set_without_secret
     assert_equal [{"path"=>"dirname456/value789"}],
-      attache_field_set([{}, "", {"path" => "dirname456/value789"}, nil])
+      attache_field_set([{}, "", {"path" => "dirname456/value789"}, nil], secret_key: "")
+  end
+
+  def test_attache_field_set_with_secret_valid_signature
+    valid_signature = OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new('sha1'), "topsecret", 'path=dirname456/value789')
+    assert_equal [{"path"=>"dirname456/value789", "signature" => valid_signature}],
+      attache_field_set([{"path" => "dirname456/value789", "signature" => valid_signature}], secret_key: "topsecret")
+  end
+
+  def test_attache_field_set_with_secret_invalid_signature
+    assert_equal [],
+      attache_field_set([{"path" => "dirname456/value789", "signature" => "wrong"}], secret_key: "topsecret")
   end
 
   def test_attache_update_pending_diffs
