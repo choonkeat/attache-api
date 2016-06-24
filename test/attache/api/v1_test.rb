@@ -104,6 +104,7 @@ class Attache::API::TestV1 < Minitest::Test
     end
 
     def remote_response(wait: ENV['REMOTE_RESPONSE_WAIT'].to_i)
+      sleep wait
       response = HTTPClient.get attache_url_for(@uploaded['path'], 'remote')
       assert_equal 302, response.code
       assert response.headers['Location']
