@@ -39,6 +39,13 @@ class Attache::API::TestModel < Minitest::Test
     end
   end
 
+  def test_attache_field_attributes_without_secret_but_has_signature
+    with_secret_key "" do
+      assert_equal [{"path"=>"dirname456/value789", "url"=>"#{Attache::API::V1::ATTACHE_URL}/view/dirname456/geometry123/value789"}],
+        attache_field_attributes( { "path" => "dirname456/value789", "signature" => "lorem ipsum" }, "geometry123")
+    end
+  end
+
   def test_attache_field_attributes_without_secret
     with_secret_key "" do
       assert_equal [{"path"=>"dirname456/value789", "url"=>"#{Attache::API::V1::ATTACHE_URL}/view/dirname456/geometry123/value789"}],
