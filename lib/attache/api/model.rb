@@ -13,6 +13,12 @@ module Attache
         Utils.array(attr_value).inject([]) do |sum, obj|
           sum + Utils.array(obj && obj.tap {|attrs|
             attrs['url'] = V1.attache_url_for(attrs['path'], geometry)
+            attrs.delete 'signature'
+
+            # add signature
+            Attache::API::V1.attache_signature_for(attrs) do |generated_signature|
+              attrs['signature'] = generated_signature
+            end
           })
         end
       end
@@ -22,6 +28,15 @@ module Attache
           hash = value.respond_to?(:read) && V1.attache_upload(value) || value
           hash = JSON.parse(hash.to_s) rescue Hash(error: $!) unless hash.kind_of?(Hash)
           okay = hash.respond_to?(:[]) && (hash['path'] || hash[:path])
+
+          # check signature
+          Attache::API::V1.attache_signature_for(hash) do |generated_signature|
+            if generated_signature == hash['signature']
+              hash.delete 'signature'
+            else
+              okay = nil
+            end
+          end
           okay ? sum + [hash] : sum
         }
         Utils.array(new_value)
