@@ -85,7 +85,7 @@ module Attache
 
       def attache_signature_for(hash)
         if ATTACHE_SECRET_KEY.to_s.strip != ""
-          hash_without_signature = hash.reject {|k,v| k == 'signature' }
+          hash_without_signature = hash.reject {|k,v| k == 'signature' || k == 'multiple'}
           content = hash_without_signature.sort.collect {|k,v| "#{k}=#{v}" }.join('&')
           generated_signature = OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new('sha1'), ATTACHE_SECRET_KEY, content)
           yield generated_signature if block_given?

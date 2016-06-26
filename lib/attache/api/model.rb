@@ -14,6 +14,7 @@ module Attache
           sum + Utils.array(obj && obj.tap {|attrs|
             attrs['url'] = V1.attache_url_for(attrs['path'], geometry)
             attrs.delete 'signature'
+            attrs.delete 'multiple' # legacy extraneous attribute that affects signature
 
             # add signature
             Attache::API::V1.attache_signature_for(attrs) do |generated_signature|
