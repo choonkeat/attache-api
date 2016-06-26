@@ -13,20 +13,26 @@ module Attache
         Utils.array(attr_value).inject([]) do |sum, obj|
           sum + Utils.array(obj && obj.tap {|attrs|
             attrs['url'] = V1.attache_url_for(attrs['path'], geometry)
+
+            # add signature
+            Attache::API::V1.attache_signature_for(attrs) do |generated_signature|
+              attrs['signature'] = generated_signature
+            end
           })
         end
       end
 
-      def attache_field_set(array, secret_key: Attache::API::V1::ATTACHE_SECRET_KEY)
+      def attache_field_set(array)
         new_value = Utils.array(array).inject([]) {|sum,value|
           hash = value.respond_to?(:read) && V1.attache_upload(value) || value
           hash = JSON.parse(hash.to_s) rescue Hash(error: $!) unless hash.kind_of?(Hash)
           okay = hash.respond_to?(:[]) && (hash['path'] || hash[:path])
-          if secret_key.to_s.strip != ""
-            hash_without_signature = hash.reject {|k,v| k == 'signature' }
-            content = hash_without_signature.sort.collect {|k,v| "#{k}=#{v}" }.join('&')
-            generated_signature = OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new('sha1'), secret_key, content)
-            if generated_signature != hash['signature']
+
+          # check signature
+          Attache::API::V1.attache_signature_for(hash) do |generated_signature|
+            if generated_signature == hash['signature']
+              hash.delete 'signature'
+            else
               okay = nil
             end
           end
