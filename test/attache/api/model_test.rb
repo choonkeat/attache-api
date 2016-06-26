@@ -4,7 +4,7 @@ class Attache::API::TestModel < Minitest::Test
   include Attache::API::Model
 
   def with_secret_key(value)
-    old_value = Attache::API::V1::ATTACHE_SECRET_KEY.dup
+    old_value = Attache::API::V1::ATTACHE_SECRET_KEY && Attache::API::V1::ATTACHE_SECRET_KEY.dup
     Attache::API::V1.send(:remove_const, :ATTACHE_SECRET_KEY)
     Attache::API::V1.send(:const_set, :ATTACHE_SECRET_KEY, value)
     yield value
